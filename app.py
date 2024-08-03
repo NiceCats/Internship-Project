@@ -10,7 +10,10 @@ import os
 # title for streamlit
 st.title("Submit Data Excel")
 
-# upload file type xlsx and csv
+def load_data(uploaded_file):
+    df = pd.read_excel(uploaded_file)
+    return df
+
 uploaded_file = st.file_uploader("Choose a file", type=["xlsx", "csv"])
 
 # read file
@@ -40,7 +43,7 @@ if 'df' in locals() or 'df' in globals():
     unique_columns = st.sidebar.selectbox(
     "Select Column:",
     options = df.columns.unique().tolist(),
-)
+    )
     
     unique_months = st.sidebar.multiselect(
         "Select Month:",
@@ -55,11 +58,35 @@ else:
     st.warning("Please upload a file to proceed.")
     
 # pie chart
-if 'df' in locals() or 'df' in globals() and unique_columns == "Nama Nasabah":
+if 'df' in locals() or 'df' in globals():
     filtered_df = df[(df["Bulan"].isin(unique_months)) & (df["Tahun"] == unique_years)]
-    fig = px.pie(filtered_df, names=unique_columns, values='Total Keseluruhan', title='Pie Statistics by Total Keseluruhan')
-    st.plotly_chart(fig)
+    fig_pie_nasabah = px.pie(
+        filtered_df, 
+        names=unique_columns, 
+        values='Total Keseluruhan',
+        hole=0.4,
+        title="<b>Pie Chart by Nama Nasabah</b>"
+    )
+    st.plotly_chart(fig_pie_nasabah)
 
-    filtered_df = df[(df["Bulan"].isin(unique_months)) & (df["Tahun"] == unique_years)]
-    fig = px.bar(filtered_df, x = unique_columns, y = "Total Harga", title = 'Bar Chart by Total Harga')
-    st.plotly_chart(fig)
+    fig_bar_totalharga = px.bar(
+        filtered_df,
+        x = unique_columns,
+        y = "Total Harga",
+        orientation = "v",
+        title = "<b>Bar Chart by Total Harga</b>",
+        template = "plotly_white"
+    )
+    fig_bar_totalharga.update_layout(
+        xaxis = dict(showgrid = False),
+    )
+    st.plotly_chart(fig_bar_totalharga)
+    
+    if "Nama Nasabah" in unique_columns:    
+        fig_line_totalharga = px.line(
+            df,
+            x = "Nama Nasabah",
+            y = "Total Keseluruhan",
+            title = "<b>Line Chart by Total Harga</b>"
+        )
+        st.plotly_chart(fig_line_totalharga)
