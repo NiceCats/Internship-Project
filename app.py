@@ -38,8 +38,9 @@ if uploaded_file is not None:
 st.divider()
 
 # chart type
-st.sidebar.header("Please Select:")
 if 'df' in locals() or 'df' in globals():
+    st.sidebar.header("Please Select Options:")
+    
     unique_columns = st.sidebar.selectbox(
     "Select Column:",
     options = df.columns.unique().tolist(),
@@ -55,7 +56,7 @@ if 'df' in locals() or 'df' in globals():
         options = df["Tahun"].unique().tolist(),
     )
 else:
-    st.warning("Please upload a file to proceed.")
+    st.warning("Please upload .xlsx or .csv file to proceed.")
     
 # pie chart
 if 'df' in locals() or 'df' in globals():
