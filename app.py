@@ -8,8 +8,9 @@ import numerize.numerize as numerize
 import os
 
 # title for streamlit
-st.title("Submit Data Excel")
+st.title("Submit Data Excel or CSV")
 
+@st.cache_data()
 def load_data(uploaded_file):
     df = pd.read_excel(uploaded_file)
     return df
@@ -60,34 +61,39 @@ else:
     
 # pie chart
 if 'df' in locals() or 'df' in globals():
-    filtered_df = df[(df["Bulan"].isin(unique_months)) & (df["Tahun"] == unique_years)]
-    fig_pie_nasabah = px.pie(
-        filtered_df, 
-        names=unique_columns, 
-        values='Total Keseluruhan',
-        hole=0.4,
-        title="<b>Pie Chart by Nama Nasabah</b>"
-    )
-    st.plotly_chart(fig_pie_nasabah)
+    if unique_months:  # Check if at least one month is selected
+        filtered_df = df[(df["Bulan"].isin(unique_months)) & (df["Tahun"] == unique_years)]
 
-    fig_bar_totalharga = px.bar(
-        filtered_df,
-        x = unique_columns,
-        y = "Total Harga",
-        orientation = "v",
-        title = "<b>Bar Chart by Total Harga</b>",
-        template = "plotly_white"
-    )
-    fig_bar_totalharga.update_layout(
-        xaxis = dict(showgrid = False),
-    )
-    st.plotly_chart(fig_bar_totalharga)
-    
-    if "Nama Nasabah" in unique_columns:    
-        fig_line_totalharga = px.line(
-            df,
-            x = "Nama Nasabah",
-            y = "Total Keseluruhan",
-            title = "<b>Line Chart by Total Harga</b>"
+        # Create and display the charts
+        fig_pie_nasabah = px.pie(
+            filtered_df,
+            names=unique_columns,
+            values='Total Keseluruhan',
+            hole=0.4,
+            title="<b>Pie Chart by Nama Nasabah</b>"
         )
-        st.plotly_chart(fig_line_totalharga)
+        st.plotly_chart(fig_pie_nasabah)
+
+        fig_bar_totalharga = px.bar(
+            filtered_df,
+            x=unique_columns,
+            y="Total Harga",
+            orientation="v",
+            title="<b>Bar Chart by Total Harga</b>",
+            template="plotly_white"
+        )
+        fig_bar_totalharga.update_layout(
+            xaxis=dict(showgrid=False),
+        )
+        st.plotly_chart(fig_bar_totalharga)
+
+        if "Nama Nasabah" in unique_columns:
+            fig_line_totalharga = px.line(
+                df,
+                x="Nama Nasabah",
+                y="Total Keseluruhan",
+                title="<b>Line Chart by Total Harga</b>"
+            )
+            st.plotly_chart(fig_line_totalharga)
+    else:
+        st.warning("Please select at least one month to display the charts.")
