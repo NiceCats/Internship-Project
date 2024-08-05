@@ -63,7 +63,7 @@ else:
 
 def create_and_display_charts(df, unique_columns, unique_months, unique_years):
     filtered_df = df[(df["Bulan"].isin(unique_months)) & (df["Tahun"] == unique_years)]
-
+    
     # create charts
     fig_pie_nasabah = px.pie(
         filtered_df,
@@ -95,9 +95,9 @@ def create_and_display_charts(df, unique_columns, unique_months, unique_years):
             title="<b>Line Chart by Total Harga</b>"
         )
         st.plotly_chart(fig_line_totalharga)
-    else:
-        st.warning("Please select at least one month to display the charts.")
-
+    
 # Di dalam bagian kode Anda yang sebelumnya
 if ('df' in locals() or 'df' in globals()) and unique_months:
     create_and_display_charts(df, unique_columns, unique_months, unique_years)
+else:
+    st.warning("Please select at least one month to display the charts.")
