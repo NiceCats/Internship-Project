@@ -61,7 +61,7 @@ else:
     st.warning("Please upload .xlsx or .csv file to proceed.")
     
 # pie chart
-if 'df' in locals() or 'df' in globals() and unique_months:
+if ('df' in locals() or 'df' in globals()) and unique_months:
     filtered_df = df[(df["Bulan"].isin(unique_months)) & (df["Tahun"] == unique_years)]
 
     # Create and display the charts
@@ -95,5 +95,5 @@ if 'df' in locals() or 'df' in globals() and unique_months:
             title="<b>Line Chart by Total Harga</b>"
         )
         st.plotly_chart(fig_line_totalharga)
-    else:
-        st.warning("Please select at least one month to display the charts.")
+else:
+    st.warning("Please select at least one month to display the charts.")
